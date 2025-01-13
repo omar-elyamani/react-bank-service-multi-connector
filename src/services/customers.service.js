@@ -1,8 +1,6 @@
 import api from "./axiosConfig";
 
-const getCustomers = () => {
-  return api.get("/agent_guichet/all");
-};
+const getCustomers = () => {return api.get("/agent_guichet/all");};
 
 const createCustomer = (identityRef, firstname, lastname, username) => {
   return api.post("/agent_guichet/create", {
@@ -24,6 +22,7 @@ const updateCustomer = (identityRef, firstname, lastname, username) => {
 const deleteCustomer = (identityRef) => {
   return api.delete("/agent_guichet/delete/" + identityRef);
 };
+
 const CustomersService = {
   getCustomers,
   createCustomer,

@@ -16,37 +16,47 @@ const CustomerComponent = () => {
 
   async function save(event) {
     event.preventDefault();
-    if (id) {
-      await CustomersService.updateCustomer(
-        identityRef,
-        firstname,
-        lastname,
-        username
-      ).then((result) => setMessageInfo("Customer updated with success"));
-    } else {
-      await CustomersService.createCustomer(
-        identityRef,
-        firstname,
-        lastname,
-        username
-      ).then((result) => setMessageInfo("Customer added with success"));
+    try {
+      if (id) {
+        await CustomersService.updateCustomer(
+          identityRef,
+          firstname,
+          lastname,
+          username
+        );
+        setMessageInfo("Customer updated successfully!");
+      } else {
+        await CustomersService.createCustomer(
+          identityRef,
+          firstname,
+          lastname,
+          username
+        );
+        setMessageInfo("Customer added successfully!");
+      }
+      resetForm();
+      loadCustomers();
+    } catch (e) {
+      setMessageError(e.response?.data?.message || "An error occurred.");
     }
+  }
 
+  const resetForm = () => {
     setId("");
     setFirstname("");
     setLastname("");
     setIdentityRef("");
     setUsername("");
-    loadCustomers();
     setMessageError("");
-  }
+    setMessageInfo("");
+  };
 
-  async function editCustomer(customers) {
-    setFirstname(customers.firstname);
-    setLastname(customers.lastname);
-    setIdentityRef(customers.identityRef);
-    setUsername(customers.username);
-    setId(customers.id);
+  async function editCustomer(customer) {
+    setFirstname(customer.firstname);
+    setLastname(customer.lastname);
+    setIdentityRef(customer.identityRef);
+    setUsername(customer.username);
+    setId(customer.id);
     setMessageError("");
     setMessageInfo("");
   }
@@ -54,108 +64,122 @@ const CustomerComponent = () => {
   async function deleteCustomer(id) {
     setMessageError("");
     setMessageInfo("");
-    await CustomersService.deleteCustomer(id)
-      .then((result) => {
-        setMessageInfo(result.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        setMessageError(e.response.data.message);
-      });
-    loadCustomers();
+    try {
+      const result = await CustomersService.deleteCustomer(id);
+      setMessageInfo(result.data);
+      loadCustomers();
+    } catch (e) {
+      setMessageError(e.response?.data?.message || "An error occurred.");
+    }
   }
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
       setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
+      loadCustomers();
     }
-    if (user) (async () => await loadCustomers())();
   }, []);
 
   async function loadCustomers() {
-    await CustomersService.getCustomers()
-      .then((result) => {
-        setCustomers(result.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        //setMessageError(e.message);
-        setMessageError(e.response.data.details);
-      });
+    try {
+      const result = await CustomersService.getCustomers();
+      setCustomers(result.data);
+    } catch (e) {
+      setMessageError(e.response?.data?.details || "Failed to load customers.");
+    }
   }
-  
+
   return (
-    <div className="container mt-4">
-      <div className="container">
-        {messageError && (
-          <div className="alert alert-danger" role="alert">
-            {messageError}
-          </div>
-        )}
-        {messageInfo && (
-          <div className="alert alert-success" role="alert">
-            {messageInfo}
-          </div>
-        )}
-      </div>
-      {showAgentGuichetBoard && (
-        <form>
-          <div className="form-group my-2">
-            <input
-              hidden
-              type="text"
-              className="form-control"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-            />
-            <label>Lastname</label>
-            <input
-              type="text"
-              className="form-control"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
-            />
-          </div>
-          <div className="form-group mb-2">
-            <label>Firstname</label>
-            <input
-              type="text"
-              className="form-control"
-              value={firstname}
-              onChange={(e) => setFirstname(e.target.value)}
-            />
-          </div>
-          <div className="row">
-            <div className="col-4">
-              <label>Identity Ref</label>
-              <input
-                type="text"
-                className="form-control"
-                value={identityRef}
-                onChange={(e) => setIdentityRef(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-4">
-              <label>Username</label>
-              <input
-                type="text"
-                className="form-control"
-                value={username}
-                placeholder="Customers"
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-          </div>
-          <div>
-            <button className="btn btn-primary m-4" onClick={save}>
-              Save
-            </button>
-          </div>
-        </form>
+    <div className="container mt-5">
+      {/* Alerts */}
+      {messageError && (
+        <div className="alert alert-danger" role="alert">
+          {messageError}
+        </div>
       )}
+      {messageInfo && (
+        <div className="alert alert-success" role="alert">
+          {messageInfo}
+        </div>
+      )}
+
+      {/* Form */}
+      {showAgentGuichetBoard && (
+        <div className="card shadow mb-4">
+          <div className="card-header bg-primary text-white">
+          <h4 className="mb-0">
+            {id ? "Edit Customer" : "Add New Customer"}
+          </h4>
+          </div>
+          <div className="card-body">
+            <form onSubmit={save}>
+              <div className="form-group mb-3">
+                <label htmlFor="firstname">First Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="firstname"
+                  value={firstname}
+                  placeholder="Enter first name"
+                  onChange={(e) => setFirstname(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="lastname">Last Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="lastname"
+                  value={lastname}
+                  placeholder="Enter last name"
+                  onChange={(e) => setLastname(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="identityRef">Identity Reference</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="identityRef"
+                  value={identityRef}
+                  placeholder="Enter identity reference"
+                  onChange={(e) => setIdentityRef(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="username">Username</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="username"
+                  value={username}
+                  placeholder="Enter username"
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="text-center">
+                <button type="submit" className="btn btn-success me-2">
+                  {id ? "Update" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={resetForm}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Customer List */}
       <CustomerList
         customers={customers}
         editCustomer={editCustomer}

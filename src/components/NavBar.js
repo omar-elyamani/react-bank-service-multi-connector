@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
@@ -15,9 +14,7 @@ const NavBar = () => {
       setCurrentUser(user);
       setShowClientBoard(user.roles.includes("ROLE_CLIENT"));
       setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
-      setShowAgentGuichetGetBoard(
-        user.roles.includes("ROLE_AGENT_GUICHET_GET")
-      );
+      setShowAgentGuichetGetBoard(user.roles.includes("ROLE_AGENT_GUICHET_GET"));
     }
   }, []);
 
@@ -30,79 +27,96 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand navbar-dark bg-dark">
-      <Link to={"/"} className="navbar-brand">
-      &nbsp;&nbsp; Bank App
-      </Link>
-      <div className="navbar-nav mr-auto">
-        <li className="nav-item">
-          <Link to={"/home"} className="nav-link">
-            Home
-          </Link>
-        </li>
-        {showAgentGuichetBoard | showAgentGuichetGetBoard && (
-          <>
-            <li className="nav-item">
-              <Link to={"/manage_customers"} className="nav-link">
-                Customers Management
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/manage_bankaccounts"} className="nav-link">
-                Bank Accounts Management
-              </Link>
-            </li>
-          </>
-        )}
-        {showClientBoard && (
-          <>
-            <li className="nav-item">
-              <Link to={"/consult_account"} className="nav-link">
-                My Bank Account
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to={"/add_wirer_transfer"} className="nav-link">
-                Wired Transfer
-              </Link>
-            </li>
-          </>
-        )}
-        {currentUser && (
-          <li className="nav-item">
-            <Link to={"/profile"} className="nav-link">
-              Profile
-            </Link>
-          </li>
-        )}
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+      <div className="container">
+        <Link to="/home" className="navbar-brand">
+          <i className="fas fa-university me-2"></i>Bank App
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNav">
+          <ul className="navbar-nav me-auto">
+            {(showAgentGuichetBoard || showAgentGuichetGetBoard) && (
+              <>
+                <li className="nav-item">
+                  <Link to="/manage_bankaccounts" className="nav-link">
+                    Manage Bank Accounts
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/manage_customers" className="nav-link">
+                    Manage Customers
+                  </Link>
+                </li>
+              </>
+            )}
+            {showClientBoard && (
+              <>
+                <li className="nav-item">
+                  <Link to="/consult_account" className="nav-link">
+                    My Account
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/add_wirer_transfer" className="nav-link">
+                    Wire Transfer
+                  </Link>
+                </li>
+              </>
+            )}
+            {currentUser && (
+              <li className="nav-item">
+                <Link to="/profile" className="nav-link">
+                  Profile
+                </Link>
+              </li>
+            )}
+          </ul>
+          <ul className="navbar-nav ms-auto">
+            {currentUser ? (
+              <>
+                <li className="nav-item">
+                  <span className="nav-link text-light">
+                    <i className="fas fa-user me-2"></i>
+                    {currentUser.username}
+                  </span>
+                </li>
+                <li className="nav-item">
+                  <a
+                    href="/login"
+                    className="nav-link text-light"
+                    onClick={logOut}
+                  >
+                    <i className="fas fa-sign-out-alt me-2"></i>Log out
+                  </a>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link to="/login" className="nav-link">
+                    <i className="fas fa-sign-in-alt me-2"></i>Login
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/register" className="nav-link">
+                    <i className="fas fa-user-plus me-2"></i>Sign Up
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
       </div>
-      {currentUser ? (
-        <div className="navbar-nav ml-auto">
-          <li className="nav-item">
-            <Link to={"/profile"} className="nav-link">
-              {currentUser.username}
-            </Link>
-          </li>
-          <li className="nav-item">
-            <a href="/login" className="nav-link" onClick={logOut}>
-              LogOut
-            </a>
-          </li>
-        </div>
-      ) : (
-        <div className="navbar-nav ml-auto">
-          <li className="nav-item">
-            <Link to={"/login"} className="nav-link">
-              Login
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to={"/register"} className="nav-link">
-              Sign Up
-            </Link>
-          </li>
-        </div>
-      )}
     </nav>
   );
 };
