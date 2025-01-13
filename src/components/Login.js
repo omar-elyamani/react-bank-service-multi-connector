@@ -89,7 +89,8 @@ const Login = () => {
               validations={[required]}
             />
           </div>
-          <div className="form-group">
+          <br/>
+          <div className="form-group" style={{ textAlign: "center" }}>
             <button className="btn btn-primary btn-block" disabled={loading}>
               {loading && (
                 <span className="spinner-border spinner-border-sm"></span>
