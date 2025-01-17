@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import CustomerList from "./CustomerList";
 import CustomersService from "../services/customers.service";
 import AuthService from "../services/auth.service";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerComponent = () => {
   const [id, setId] = useState("");
@@ -9,8 +11,6 @@ const CustomerComponent = () => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [username, setUsername] = useState("");
-  const [messageInfo, setMessageInfo] = useState("");
-  const [messageError, setMessageError] = useState("");
   const [customers, setCustomers] = useState([]);
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
 
@@ -24,7 +24,7 @@ const CustomerComponent = () => {
           lastname,
           username
         );
-        setMessageInfo("Customer updated successfully!");
+        toast.success("Customer updated successfully!");
       } else {
         await CustomersService.createCustomer(
           identityRef,
@@ -32,12 +32,12 @@ const CustomerComponent = () => {
           lastname,
           username
         );
-        setMessageInfo("Customer added successfully!");
+        toast.success("Customer added successfully!");
       }
       resetForm();
       loadCustomers();
     } catch (e) {
-      setMessageError(e.response?.data?.message || "An error occurred.");
+      toast.error(e.response?.data?.message || "An error occurred.");
     }
   }
 
@@ -47,8 +47,6 @@ const CustomerComponent = () => {
     setLastname("");
     setIdentityRef("");
     setUsername("");
-    setMessageError("");
-    setMessageInfo("");
   };
 
   async function editCustomer(customer) {
@@ -57,19 +55,15 @@ const CustomerComponent = () => {
     setIdentityRef(customer.identityRef);
     setUsername(customer.username);
     setId(customer.id);
-    setMessageError("");
-    setMessageInfo("");
   }
 
   async function deleteCustomer(id) {
-    setMessageError("");
-    setMessageInfo("");
     try {
       const result = await CustomersService.deleteCustomer(id);
-      setMessageInfo(result.data);
+      toast.success(result.data || "Customer deleted successfully!");
       loadCustomers();
     } catch (e) {
-      setMessageError(e.response?.data?.message || "An error occurred.");
+      toast.error(e.response?.data?.message || "An error occurred.");
     }
   }
 
@@ -86,31 +80,22 @@ const CustomerComponent = () => {
       const result = await CustomersService.getCustomers();
       setCustomers(result.data);
     } catch (e) {
-      setMessageError(e.response?.data?.details || "Failed to load customers.");
+      toast.error(e.response?.data?.details || "Failed to load customers.");
     }
   }
 
   return (
     <div className="container mt-5">
-      {/* Alerts */}
-      {messageError && (
-        <div className="alert alert-danger" role="alert">
-          {messageError}
-        </div>
-      )}
-      {messageInfo && (
-        <div className="alert alert-success" role="alert">
-          {messageInfo}
-        </div>
-      )}
+      {/* Toast Container */}
+      <ToastContainer />
 
       {/* Form */}
       {showAgentGuichetBoard && (
         <div className="card shadow mb-4">
           <div className="card-header bg-primary text-white">
-          <h4 className="mb-0">
-            {id ? "Edit Customer" : "Add New Customer"}
-          </h4>
+            <h4 className="mb-0" style={{ textAlign: "center" }}>
+              {id ? "Edit customer" : "Add new customer"}
+            </h4>
           </div>
           <div className="card-body">
             <form onSubmit={save}>
@@ -162,7 +147,7 @@ const CustomerComponent = () => {
                   required
                 />
               </div>
-              <div className="text-center">
+              <div className="text-center" style={{ marginTop: "50px" }}>
                 <button type="submit" className="btn btn-success me-2">
                   {id ? "Update" : "Add"}
                 </button>
@@ -179,7 +164,6 @@ const CustomerComponent = () => {
         </div>
       )}
 
-      {/* Customer List */}
       <CustomerList
         customers={customers}
         editCustomer={editCustomer}

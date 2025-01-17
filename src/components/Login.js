@@ -9,7 +9,7 @@ import login from "../assets/login.png";
 const required = (value) => {
   if (!value) {
     return (
-      <div className="alert alert-danger" role="alert">
+      <div className="alert alert-danger mt-2" role="alert">
         This field is required!
       </div>
     );
@@ -26,13 +26,11 @@ const Login = () => {
   const [message, setMessage] = useState("");
 
   const onChangeUsername = (e) => {
-    const username = e.target.value;
-    setUsername(username);
+    setUsername(e.target.value);
   };
 
   const onChangePassword = (e) => {
-    const password = e.target.value;
-    setPassword(password);
+    setPassword(e.target.value);
   };
 
   const handleLogin = (e) => {
@@ -63,12 +61,22 @@ const Login = () => {
   };
 
   return (
-    <div className="col-md-12">
-      <div className="card card-container">
-        <img src={login} alt="profile-img" className="profile-img-card" />
+    <div className="d-flex justify-content-center align-items-center vh-95 bg-white" >
+      <div className="card shadow-lg p-4" style={{ maxWidth: "400px", width: "100%", backgroundColor: "white" }}>
+        <div className="text-center mb-4">
+          <img
+            src={login}
+            alt="Login"
+            className="rounded-circle"
+            style={{ width: "100px", height: "100px" }}
+          />
+        </div>
+        <h3 className="text-center mb-4">Welcome back!</h3>
         <Form onSubmit={handleLogin} ref={form}>
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
+          <div className="form-group mb-3">
+            <label htmlFor="username" className="form-label">
+              Username
+            </label>
             <Input
               type="text"
               className="form-control"
@@ -76,10 +84,13 @@ const Login = () => {
               value={username}
               onChange={onChangeUsername}
               validations={[required]}
+              placeholder="Enter your username"
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+          <div className="form-group mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
             <Input
               type="password"
               className="form-control"
@@ -87,26 +98,32 @@ const Login = () => {
               value={password}
               onChange={onChangePassword}
               validations={[required]}
+              placeholder="Enter your password"
             />
           </div>
-          <br/>
-          <div className="form-group" style={{ textAlign: "center" }}>
-            <button className="btn btn-primary btn-block" disabled={loading}>
-              {loading && (
-                <span className="spinner-border spinner-border-sm"></span>
-              )}
-              <span>Login</span>
-            </button>
-          </div>
           {message && (
-            <div className="form-group">
-              <div className="alert alert-danger" role="alert">
-                {message}
-              </div>
+            <div className="alert alert-danger mt-3" role="alert">
+              {message}
             </div>
           )}
+          <div className="text-center" style={{ marginTop: "30px" }}>
+            <button
+              className="btn btn-primary w-100"
+              disabled={loading}
+              style={{ padding: "10px" }}
+            >
+              {loading ? (
+                <span className="spinner-border spinner-border-sm"></span>
+              ) : (
+                "Login"
+              )}
+            </button>
+          </div>
           <CheckButton style={{ display: "none" }} ref={checkBtn} />
         </Form>
+        <h6 className="text-center mt-4">
+          Don't have an account? <a href="/register">Sign up</a>
+        </h6>
       </div>
     </div>
   );

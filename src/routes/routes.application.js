@@ -4,7 +4,7 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 import Profile from "../components/Profile";
 import CustomerComponent from "../components/CustomerComponent";
-import BankAccount from "../components/BankAccount";
+import BankAccountComponent from "../components/BankAccountComponent";
 import WirerTransfert from "../components/WirerTransfert";
 import { Route, Routes } from "react-router-dom";
 
@@ -18,9 +18,9 @@ const RoutesApplication = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/manage_customers" element={<CustomerComponent />} />
-        <Route path="/manage_bankaccounts" element={<BankAccount />} />
+        <Route path="/manage_bankaccounts" element={<BankAccountComponent />} />
         <Route path="/add_wirer_transfer" element={<WirerTransfert />} />
-        <Route path="/consult_account" element={<BankAccount />} />
+        <Route path="/consult_account" element={<BankAccountComponent />} />
       </Routes>
     </div>
   );
