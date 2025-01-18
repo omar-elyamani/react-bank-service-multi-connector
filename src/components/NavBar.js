@@ -49,12 +49,12 @@ const NavBar = () => {
               <>
                 <li className="nav-item">
                   <Link to="/manage_bankaccounts" className="nav-link">
-                    Manage Bank Accounts
+                    Bank accounts
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/manage_customers" className="nav-link">
-                    Manage Customers
+                    Customers
                   </Link>
                 </li>
               </>
@@ -63,12 +63,12 @@ const NavBar = () => {
               <>
                 <li className="nav-item">
                   <Link to="/consult_account" className="nav-link">
-                    My Account
+                    My account
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/add_wirer_transfer" className="nav-link">
-                    Wire Transfer
+                    Wire transfer
                   </Link>
                 </li>
               </>

@@ -18,9 +18,9 @@ const Profile = () => {
   return (
     <div className="container mt-5">
       <div className="card shadow">
-        <div className="card-header bg-primary text-light">
+        <div className="card-header bg-primary text-light" style={{ textAlign: "center" }}>
           <h4 className="mb-0">
-            <i className="fas fa-user-circle me-2"></i>User Profile
+            <i className="fas fa-user-circle me-2"></i>Your profile
           </h4>
         </div>
         <div className="card-body">
