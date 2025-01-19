@@ -60,10 +60,18 @@ const CustomerComponent = () => {
   async function deleteCustomer(id) {
     try {
       const result = await CustomersService.deleteCustomer(id);
-      toast.success(result.data || "Customer deleted successfully!");
-      loadCustomers();
+      
+      if (result.message === "Technical error, please consult your administrator") {
+        toast.error("An error occurred! Try deleting the customer's bank accounts first.", { autoClose: 5000 });
+      } 
+
+      else {
+        toast.success("Customer deleted successfully!", { autoClose:3000 });
+        loadCustomers();
+      }
+
     } catch (e) {
-      toast.error(e.response?.data?.message || "An error occurred.");
+      toast.error("An error occurred! Try deleting the customer's bank accounts first.", { autoClose: 5000 });
     }
   }
 

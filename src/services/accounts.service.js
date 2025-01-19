@@ -16,18 +16,15 @@ const createAccount = (rib, amount, customerIdentityRef) => {
   });
 };
 
-const editAccount = (rib, status) => {
-  return api.put("/bank/update/" + rib, {
-    rib,
-    status
-  });
+const deleteAccount = (rib) => {
+  return api.delete("/bank/delete/" + rib);
 };
 
 const BankAccountsService = {
   getAllAccounts,
   getAccount,
   createAccount,
-  editAccount
+  deleteAccount
 };
 
 export default BankAccountsService;

@@ -43,15 +43,15 @@ const BankAccountComponent = () => {
     try {
       if (id) {
         await BankAccountsService.editAccount(status, rib);
-        toast.success("Bank account updated successfully!");
+        toast.success("Bank account updated successfully!", {autoClose: 3000});
       } else {
         await BankAccountsService.createAccount(rib, amount, customerIdentityRef);
-        toast.success("Bank account added successfully!");
+        toast.success("Bank account added successfully!", {autoClose: 3000});
       }
       resetForm();
       loadBankAccounts();
     } catch (e) {
-      toast.error(e.response?.data?.message || "An error occurred.");
+      toast.error(e.response?.data?.message || "An error occurred.", {autoClose: 3000});
     }
   }
 
@@ -73,7 +73,6 @@ const BankAccountComponent = () => {
 
   return (
     <div className="container mt-5">
-      {/* Toast Container */}
       <ToastContainer />
 
       {/* Form */}
@@ -81,7 +80,7 @@ const BankAccountComponent = () => {
         <div className="card shadow mb-4">
           <div className="card-header bg-primary text-white">
             <h4 className="mb-0" style={{ textAlign: "center" }}>
-              {id ? "Edit bank account" : "Add new bank account"}
+              {id ? "Bank account details" : "Add new bank account"}
             </h4>
           </div>
           <div className="card-body">
@@ -120,7 +119,7 @@ const BankAccountComponent = () => {
                   required
                 >
                   <option value="" disabled>
-                    Select an Identity Reference
+                    Select an identity reference
                   </option>
                   {customers.map((customer) => (
                     <option key={customer.id} value={customer.identityRef}>
@@ -147,7 +146,12 @@ const BankAccountComponent = () => {
         </div>
       )}
 
-      <BankAccountList bankaccounts={accounts} getbankaccount={getAccount} />
+      <BankAccountList
+        bankaccounts={accounts}
+        getbankaccount={getAccount}
+        deleteaccount={BankAccountsService.deleteAccount}
+        loadaccounts={loadBankAccounts}
+      />
     </div>
   );
 };

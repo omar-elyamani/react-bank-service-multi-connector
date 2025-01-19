@@ -3,6 +3,7 @@ import AuthService from "../services/auth.service";
 
 const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
@@ -11,10 +12,48 @@ const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
     }
   }, []);
 
+  // Filter customers based on the identity reference
+  const filteredCustomers = customers.filter((customer) =>
+    customer.identityRef.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="table-responsive mt-4">
-      <h3 className="text-center mb-4"> </h3>
-      {customers.length > 0 ? (
+      {/* Inline CSS for Placeholder */}
+      <style>
+        {`
+          .search-input::placeholder {
+            color: white;
+            opacity: 1; /* Ensures placeholder text is fully visible */
+            text-align: center; /* Centers the placeholder text */
+          }
+
+          .search-input {
+            text-align: center; /* Centers all text inside the input field */
+          }
+        `}
+      </style>
+
+      {/* Search Field */}
+      <div className="mb-3 d-flex justify-content-end">
+        <input
+          type="text"
+          className="form-control search-input"
+          style={{
+            maxWidth: "300px",
+            borderRadius: "25px",
+            padding: "10px 15px",
+            boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
+            backgroundColor: "#343a40",
+            color: "white",
+          }}
+          placeholder="Search by identity reference"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {filteredCustomers.length > 0 ? (
         <table className="table table-bordered table-hover align-middle text-center">
           <thead className="table-dark">
             <tr>
@@ -27,7 +66,7 @@ const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
             </tr>
           </thead>
           <tbody>
-            {customers.map((customer, index) => (
+            {filteredCustomers.map((customer, index) => (
               <tr key={customer.id}>
                 <td>{index + 1}</td>
                 <td>{customer.firstname}</td>
@@ -46,7 +85,9 @@ const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
                     <button
                       type="button"
                       className="btn btn-danger btn-sm"
-                      onClick={() => deleteCustomer(customer.identityRef)}
+                      onClick={() => {
+                        deleteCustomer(customer.identityRef);
+                      }}
                     >
                       Delete
                     </button>
@@ -54,11 +95,11 @@ const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
                 )}
               </tr>
             ))}
-          </tbody> <br/>
+          </tbody>
         </table>
       ) : (
         <div className="alert alert-info text-center">
-          No customers available. Please add a customer.
+          No customers found matching the search term.
         </div>
       )}
     </div>
