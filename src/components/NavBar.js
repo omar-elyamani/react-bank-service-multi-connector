@@ -13,7 +13,7 @@ const NavBar = () => {
     if (user) {
       setCurrentUser(user);
       setShowClientBoard(user.roles.includes("ROLE_CLIENT"));
-      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
+      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN"));
       setShowAgentGuichetGetBoard(user.roles.includes("ROLE_AGENT_GUICHET_GET"));
     }
   }, []);

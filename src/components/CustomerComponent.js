@@ -78,7 +78,7 @@ const CustomerComponent = () => {
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
-      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
+      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN"));
       loadCustomers();
     }
   }, []);

@@ -75,12 +75,14 @@ const BankAccountComponent = () => {
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
-      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
-  
-      if (user.roles.includes("ROLE_CLIENT")) {
-        loadCustomerBankAccounts();
-      } else {
+      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN")); 
+
+      if(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN")) { 
         loadBankAccounts();
+      }
+      
+      else if (user.roles.includes("ROLE_CLIENT")) {
+        loadCustomerBankAccounts();
       }
     }
   }, []);
