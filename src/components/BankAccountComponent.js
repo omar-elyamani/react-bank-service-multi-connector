@@ -11,17 +11,17 @@ const BankAccountComponent = () => {
   const [customerIdentityRef, setIdentityRef] = useState("");
   const [rib, setRib] = useState("");
   const [amount, setAmount] = useState("");
-  const [status, setStatus] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
+  const [isReadonly, setIsReadonly] = useState(false);
 
   const resetForm = () => {
     setId("");
     setIdentityRef("");
     setRib("");
     setAmount("");
-    setStatus("");
+    setIsReadonly(false);
   };
 
   async function loadBankAccounts() {
@@ -32,26 +32,35 @@ const BankAccountComponent = () => {
       const result2 = await CustomersService.getCustomers();
       setCustomers(result2.data);
     } catch (e) {
-      toast.error(
-        e.response?.data?.details || "Failed to load bank accounts."
-      );
+      toast.error(e.response?.data?.details || "Failed to load bank accounts.");
+    }
+  }
+
+  async function loadCustomerBankAccounts() {
+    try {
+      const user = localStorage.getItem("username"); 
+      if (!user) {
+        throw new Error("User is not logged in");
+      }
+  
+      const result = await CustomersService.getcustomerbankaccounts(user);
+      setAccounts(result.data);
+    } catch (e) {
+      toast.error(e.response?.data?.details || "Failed to load bank accounts.");
     }
   }
 
   async function save(event) {
     event.preventDefault();
     try {
-      if (id) {
-        await BankAccountsService.editAccount(status, rib);
-        toast.success("Bank account updated successfully!", {autoClose: 3000});
-      } else {
-        await BankAccountsService.createAccount(rib, amount, customerIdentityRef);
-        toast.success("Bank account added successfully!", {autoClose: 3000});
-      }
+      await BankAccountsService.createAccount(rib, amount, customerIdentityRef);
+      toast.success("Bank account added successfully!", { autoClose: 3000 });
       resetForm();
       loadBankAccounts();
     } catch (e) {
-      toast.error(e.response?.data?.message || "An error occurred.", {autoClose: 3000});
+      toast.error(e.response?.data?.message || "An error occurred.", {
+        autoClose: 3000,
+      });
     }
   }
 
@@ -59,15 +68,20 @@ const BankAccountComponent = () => {
     setIdentityRef(account.customer.identityRef);
     setRib(account.rib);
     setAmount(account.amount);
-    setStatus(account.status);
     setId(account.id);
+    setIsReadonly(true);
   }
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
       setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
-      loadBankAccounts();
+  
+      if (user.roles.includes("ROLE_CLIENT")) {
+        loadCustomerBankAccounts();
+      } else {
+        loadBankAccounts();
+      }
     }
   }, []);
 
@@ -94,6 +108,7 @@ const BankAccountComponent = () => {
                   value={rib}
                   placeholder="RIB or IBAN"
                   onChange={(e) => setRib(e.target.value)}
+                  readOnly={isReadonly} 
                   required
                 />
               </div>
@@ -106,6 +121,7 @@ const BankAccountComponent = () => {
                   value={amount}
                   placeholder="Amount in M.A.D"
                   onChange={(e) => setAmount(e.target.value)}
+                  readOnly={isReadonly}
                   required
                 />
               </div>
@@ -116,6 +132,7 @@ const BankAccountComponent = () => {
                   id="customerIdentityRef"
                   value={customerIdentityRef}
                   onChange={(e) => setIdentityRef(e.target.value)}
+                  disabled={isReadonly}
                   required
                 >
                   <option value="" disabled>
@@ -129,9 +146,11 @@ const BankAccountComponent = () => {
                 </select>
               </div>
               <div className="text-center" style={{ marginTop: "50px" }}>
-                <button type="submit" className="btn btn-success me-2">
-                  {id ? "Update" : "Add"}
-                </button>
+                {!isReadonly && (
+                  <button type="submit" className="btn btn-success me-2">
+                    {id ? "Update" : "Add"}
+                  </button>
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary"

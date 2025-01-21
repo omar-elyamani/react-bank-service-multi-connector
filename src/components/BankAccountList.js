@@ -15,7 +15,7 @@ const BankAccountList = ({ bankaccounts, getbankaccount, deleteaccount, loadacco
 
   const handleViewDetails = (account) => {
     getbankaccount(account);
-    toast.info(`Viewing details for RIB: ${account.rib}`, { autoClose: 3000, closeButton: true });
+    toast.info(`Viewing details for RIB: ${account.rib}`, { autoClose: 2000, closeButton: true });
   };
 
   const handleDeleteAccount = async (rib) => {
@@ -28,14 +28,12 @@ const BankAccountList = ({ bankaccounts, getbankaccount, deleteaccount, loadacco
     }
   };
 
-  // Filter bank accounts based on the identity reference
   const filteredBankAccounts = bankaccounts.filter((account) =>
     account.customer.identityRef.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="table-responsive mt-4">
-      {/* Inline CSS for Placeholder */}
       <style>
         {`
           .search-input::placeholder {

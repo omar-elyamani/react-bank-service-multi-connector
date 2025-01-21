@@ -25,11 +25,16 @@ const updateCustomer = (identityRef, firstname, lastname, username) => {
   });
 };
 
+const getcustomerbankaccounts = (username) => {
+  return api.get("/customer/bank-accounts/" + username);
+}
+
 const CustomersService = {
   getCustomers,
   createCustomer,
   updateCustomer,
   deleteCustomer,
+  getcustomerbankaccounts
 };
 
 export default CustomersService;
