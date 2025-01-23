@@ -19,7 +19,6 @@ const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
 
   return (
     <div className="table-responsive mt-4">
-      {/* Inline CSS for Placeholder */}
       <style>
         {`
           .search-input::placeholder {
@@ -44,7 +43,7 @@ const CustomerList = ({ customers, editCustomer, deleteCustomer }) => {
             borderRadius: "25px",
             padding: "10px 15px",
             boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "#343a40",
+            backgroundColor: "#0d6efd",
             color: "white",
           }}
           placeholder="Search by identity reference"

@@ -15,6 +15,7 @@ const BankAccountComponent = () => {
   const [customers, setCustomers] = useState([]);
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
   const [isReadonly, setIsReadonly] = useState(false);
+  const [showForm, setShowForm] = useState(true);
 
   const resetForm = () => {
     setId("");
@@ -38,11 +39,11 @@ const BankAccountComponent = () => {
 
   async function loadCustomerBankAccounts() {
     try {
-      const user = localStorage.getItem("username"); 
+      const user = localStorage.getItem("username");
       if (!user) {
         throw new Error("User is not logged in");
       }
-  
+
       const result = await CustomersService.getcustomerbankaccounts(user);
       setAccounts(result.data);
     } catch (e) {
@@ -70,18 +71,23 @@ const BankAccountComponent = () => {
     setAmount(account.amount);
     setId(account.id);
     setIsReadonly(true);
+    setShowForm(true);
   }
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
-      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN")); 
+      setShowAgentGuichetBoard(
+        user.roles.includes("ROLE_AGENT_GUICHET") ||
+          user.roles.includes("ROLE_ADMIN")
+      );
 
-      if(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN")) { 
+      if (
+        user.roles.includes("ROLE_AGENT_GUICHET") ||
+        user.roles.includes("ROLE_ADMIN")
+      ) {
         loadBankAccounts();
-      }
-      
-      else if (user.roles.includes("ROLE_CLIENT")) {
+      } else if (user.roles.includes("ROLE_CLIENT")) {
         loadCustomerBankAccounts();
       }
     }
@@ -91,8 +97,20 @@ const BankAccountComponent = () => {
     <div className="container mt-5">
       <ToastContainer />
 
-      {/* Form */}
+      {/* Toggle Form Button */}
       {showAgentGuichetBoard && (
+        <div className="mb-3">
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? "-" : "Add new bank account"}
+          </button>
+        </div>
+      )}
+
+      {/* Form */}
+      {showAgentGuichetBoard && showForm && (
         <div className="card shadow mb-4">
           <div className="card-header bg-primary text-white">
             <h4 className="mb-0" style={{ textAlign: "center" }}>
@@ -110,7 +128,7 @@ const BankAccountComponent = () => {
                   value={rib}
                   placeholder="RIB or IBAN"
                   onChange={(e) => setRib(e.target.value)}
-                  readOnly={isReadonly} 
+                  readOnly={isReadonly}
                   required
                 />
               </div>

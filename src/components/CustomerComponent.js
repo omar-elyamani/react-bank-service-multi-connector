@@ -13,6 +13,7 @@ const CustomerComponent = () => {
   const [username, setUsername] = useState("");
   const [customers, setCustomers] = useState([]);
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
+  const [showForm, setShowForm] = useState(true); // State to toggle form visibility
 
   async function save(event) {
     event.preventDefault();
@@ -55,30 +56,40 @@ const CustomerComponent = () => {
     setIdentityRef(customer.identityRef);
     setUsername(customer.username);
     setId(customer.id);
+    setShowForm(true); // Ensure the form is visible when editing
   }
 
   async function deleteCustomer(id) {
     try {
       const result = await CustomersService.deleteCustomer(id);
-      
-      if (result.message === "Technical error, please consult your administrator") {
-        toast.error("An error occurred! Try deleting the customer's bank accounts first.", { autoClose: 5000 });
-      } 
 
-      else {
-        toast.success("Customer deleted successfully!", { autoClose:3000 });
+      if (
+        result.message ===
+        "Technical error, please consult your administrator"
+      ) {
+        toast.error(
+          "An error occurred! Try deleting the customer's bank accounts first.",
+          { autoClose: 5000 }
+        );
+      } else {
+        toast.success("Customer deleted successfully!", { autoClose: 3000 });
         loadCustomers();
       }
-
     } catch (e) {
-      toast.error("An error occurred! Try deleting the customer's bank accounts first.", { autoClose: 5000 });
+      toast.error(
+        "An error occurred! Try deleting the customer's bank accounts first.",
+        { autoClose: 5000 }
+      );
     }
   }
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
-      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN"));
+      setShowAgentGuichetBoard(
+        user.roles.includes("ROLE_AGENT_GUICHET") ||
+          user.roles.includes("ROLE_ADMIN")
+      );
       loadCustomers();
     }
   }, []);
@@ -97,8 +108,20 @@ const CustomerComponent = () => {
       {/* Toast Container */}
       <ToastContainer />
 
-      {/* Form */}
+      {/* Toggle Form Button */}
       {showAgentGuichetBoard && (
+        <div className="mb-3">
+          <button
+            className="btn btn-primary"
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? "-" : "Add new customer"}
+          </button>
+        </div>
+      )}
+
+      {/* Form */}
+      {showAgentGuichetBoard && showForm && (
         <div className="card shadow mb-4">
           <div className="card-header bg-primary text-white">
             <h4 className="mb-0" style={{ textAlign: "center" }}>
