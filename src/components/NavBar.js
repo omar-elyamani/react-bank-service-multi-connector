@@ -7,7 +7,7 @@ const NavBar = () => {
   const [showClientBoard, setShowClientBoard] = useState(false);
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
   const [showAgentGuichetGetBoard, setShowAgentGuichetGetBoard] = useState(false);
-  const [showAdminBoard, setShowAdminBoard] = useState(false); // New state for ROLE_ADMIN
+  const [showAdminBoard, setShowAdminBoard] = useState(false);
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
@@ -16,7 +16,7 @@ const NavBar = () => {
       setShowClientBoard(user.roles.includes("ROLE_CLIENT"));
       setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
       setShowAgentGuichetGetBoard(user.roles.includes("ROLE_AGENT_GUICHET_GET"));
-      setShowAdminBoard(user.roles.includes("ROLE_ADMIN")); // Check for admin role
+      setShowAdminBoard(user.roles.includes("ROLE_ADMIN"));
     }
   }, []);
 
@@ -48,7 +48,6 @@ const NavBar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
-            {/* Admin access to everything */}
             {showAdminBoard && (
               <>
                 <li className="nav-item">
@@ -78,8 +77,6 @@ const NavBar = () => {
                 </li>
               </>
             )}
-
-            {/* Agent Guichet access */}
             {(showAgentGuichetBoard || showAgentGuichetGetBoard) && !showAdminBoard && (
               <>
                 <li className="nav-item">
@@ -110,8 +107,6 @@ const NavBar = () => {
                 </li>
               </>
             )}
-
-            {/* Profile access for all logged-in users */}
             {currentUser && !showAdminBoard && (
               <li className="nav-item">
                 <Link to="/profile" className="nav-link">
