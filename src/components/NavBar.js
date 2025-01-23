@@ -7,14 +7,16 @@ const NavBar = () => {
   const [showClientBoard, setShowClientBoard] = useState(false);
   const [showAgentGuichetBoard, setShowAgentGuichetBoard] = useState(false);
   const [showAgentGuichetGetBoard, setShowAgentGuichetGetBoard] = useState(false);
+  const [showAdminBoard, setShowAdminBoard] = useState(false); // New state for ROLE_ADMIN
 
   useEffect(() => {
     const user = AuthService.getCurrentUser();
     if (user) {
       setCurrentUser(user);
       setShowClientBoard(user.roles.includes("ROLE_CLIENT"));
-      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET") || user.roles.includes("ROLE_ADMIN"));
+      setShowAgentGuichetBoard(user.roles.includes("ROLE_AGENT_GUICHET"));
       setShowAgentGuichetGetBoard(user.roles.includes("ROLE_AGENT_GUICHET_GET"));
+      setShowAdminBoard(user.roles.includes("ROLE_ADMIN")); // Check for admin role
     }
   }, []);
 
@@ -23,6 +25,7 @@ const NavBar = () => {
     setShowClientBoard(false);
     setShowAgentGuichetBoard(false);
     setShowAgentGuichetGetBoard(false);
+    setShowAdminBoard(false);
     setCurrentUser(undefined);
   };
 
@@ -45,7 +48,39 @@ const NavBar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav me-auto">
-            {(showAgentGuichetBoard || showAgentGuichetGetBoard) && (
+            {/* Admin access to everything */}
+            {showAdminBoard && (
+              <>
+                <li className="nav-item">
+                  <Link to="/manage_bankaccounts" className="nav-link">
+                    Bank accounts
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/manage_customers" className="nav-link">
+                    Customers
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/consult_account" className="nav-link">
+                    My account
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/add_wirer_transfer" className="nav-link">
+                    Wire transfer
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/profile" className="nav-link">
+                    Profile
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {/* Agent Guichet access */}
+            {(showAgentGuichetBoard || showAgentGuichetGetBoard) && !showAdminBoard && (
               <>
                 <li className="nav-item">
                   <Link to="/manage_bankaccounts" className="nav-link">
@@ -59,7 +94,9 @@ const NavBar = () => {
                 </li>
               </>
             )}
-            {showClientBoard && (
+
+            {/* Client access */}
+            {showClientBoard && !showAdminBoard && (
               <>
                 <li className="nav-item">
                   <Link to="/consult_account" className="nav-link">
@@ -73,7 +110,9 @@ const NavBar = () => {
                 </li>
               </>
             )}
-            {currentUser && (
+
+            {/* Profile access for all logged-in users */}
+            {currentUser && !showAdminBoard && (
               <li className="nav-item">
                 <Link to="/profile" className="nav-link">
                   Profile
